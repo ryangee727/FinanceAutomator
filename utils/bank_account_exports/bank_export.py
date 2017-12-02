@@ -33,8 +33,7 @@ class BankExport(object):
             return 'REI'
 
     def extract_to_data_frame(self, skip_rows=0):
-        df = pd.read_csv(self.export_file, skiprows=skip_rows)
-        self.data_frame = df
+        self.data_frame = pd.read_csv(self.export_file, skiprows=skip_rows)
 
     def remove_column(self, col_name):
         self.data_frame.drop(col_name, axis=1, inplace=True)
@@ -59,5 +58,12 @@ class BankExport(object):
         ]
         self.data_frame = filter_on_date
         self._convert_date_back_to_string()
+
+    def format_data(self):
+        self.remove_payments()
+        self.create_cost_column()
+        self.create_category_column()
+        self.filter_monthly_costs()
+
 
 

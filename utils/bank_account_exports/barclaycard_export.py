@@ -11,8 +11,5 @@ class BarclaycardExport(BankExport):
         self.rename_column('Description', 'Name')
         self.rename_column('Transaction Date', 'Date')
         self.rename_column('Amount', 'Price')
-        self.remove_payments()
-        self.create_cost_column()
-        self.create_category_column()
-        self.filter_monthly_costs()
+        super().format_data()
 

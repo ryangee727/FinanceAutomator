@@ -12,7 +12,7 @@ bank_exports = BankExportRetriever('../data/').get_bank_exports()
 merged = pd.concat(bank_exports, ignore_index=True)
 
 csp = ConsciousSpendingPlan()
-# csp.add_next_months_worksheet()
+csp.add_next_months_worksheet()
 csp.import_df(merged)
 # print(csp.export_df())
 
