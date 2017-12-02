@@ -1,11 +1,24 @@
 import pandas as pd
 import numpy as np
+from dateutil.relativedelta import *
+import datetime
 
 
 class BankExport(object):
     def __init__(self, export_file):
         self.export_file = export_file
+        self.day_one_last_month = (datetime.date.today() + relativedelta(months=-1)).replace(day=1).strftime('%m/%d/%Y')
+        self.day_one_cur_month = datetime.date.today().replace(day=1).strftime('%m/%d/%Y')
         self.data_frame = None
+
+    def _str_to_pd_date(self, date_str):
+        return pd.to_datetime(date_str, format='%m/%d/%Y')
+
+    def _convert_date_column(self):
+        self.data_frame['Date'] = self._str_to_pd_date(self.data_frame['Date'])
+
+    def _convert_date_back_to_string(self):
+        self.data_frame['Date'] = self.data_frame['Date'].dt.strftime('%m/%d/%Y')
 
     def is_barclaycard_export(self):
         return 'CreditCard_' in self.export_file
@@ -37,4 +50,14 @@ class BankExport(object):
 
     def create_category_column(self):
         self.data_frame['Category'] = 'Eating Out'
+
+    def filter_monthly_costs(self):
+        self._convert_date_column()
+        filter_on_date = self.data_frame[
+            (self.data_frame['Date'] >= self._str_to_pd_date(self.day_one_last_month)) &
+            (self.data_frame['Date'] < self._str_to_pd_date(self.day_one_cur_month))
+        ]
+        self.data_frame = filter_on_date
+        self._convert_date_back_to_string()
+
 

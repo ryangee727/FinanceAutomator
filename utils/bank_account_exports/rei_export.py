@@ -14,4 +14,5 @@ class REIExport(BankExport):
         self.remove_payments()
         self.create_cost_column()
         self.create_category_column()
+        self.filter_monthly_costs()
 

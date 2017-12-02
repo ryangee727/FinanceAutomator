@@ -13,8 +13,8 @@ merged = pd.concat(bank_exports, ignore_index=True)
 
 csp = ConsciousSpendingPlan()
 # csp.add_next_months_worksheet()
-# csp.import_df(merged)
-print(csp.export_df())
+csp.import_df(merged)
+# print(csp.export_df())
 
 
 # from sklearn.datasets import load_iris
