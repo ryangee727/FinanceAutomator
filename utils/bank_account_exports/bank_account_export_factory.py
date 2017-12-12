@@ -1,5 +1,6 @@
 from utils.bank_account_exports.barclaycard_export import BarclaycardExport
 from utils.bank_account_exports.rei_export import REIExport
+from utils.bank_account_exports.wf_checking_export import WFCheckingExport
 from utils.bank_account_exports.bank_export import BankExport
 
 
@@ -7,7 +8,8 @@ class BankAccountExportFactory(object):
     def __init__(self, csv_file):
         self.bank_types = {
             'REI': REIExport,
-            'Barclaycard': BarclaycardExport
+            'Barclaycard': BarclaycardExport,
+            'WFChecking': WFCheckingExport
         }
         self.csv_file = csv_file
 

@@ -1,14 +1,11 @@
 from utils.google_sheets import GoogleSheets
 from dateutil.relativedelta import *
-from utils.util import isfloat, convert_float_to_dollar
 import datetime
 
 
-class ConsciousSpendingPlan(object):
+class ARExpenses(object):
     def __init__(self):
-        self.spreadsheet = GoogleSheets("Conscious Spending Plan").get_spreadsheet()
-        self.prev_month = (datetime.datetime.now() + relativedelta(months=-2)).strftime('%b')
-        self.prev_months_year = (datetime.datetime.now() + relativedelta(months=-2)).strftime('%y')
+        self.spreadsheet = GoogleSheets("A&R Expenses").get_spreadsheet()
         self.year = (datetime.datetime.now() + relativedelta(months=-1)).strftime('%y')
         self.month = (datetime.datetime.now() + relativedelta(months=-1)).strftime('%b')
         self.next_month = datetime.datetime.now().strftime('%b')
@@ -18,33 +15,32 @@ class ConsciousSpendingPlan(object):
         self.current_wksht = self.spreadsheet.worksheet_by_title(self.wksheet_name)
         self.next_wksheet = None
 
-    @staticmethod
-    def __split_shared_cost_row(row):
-        if row['Shared?'] == 'y':
-            return convert_float_to_dollar(float(row['Price'][2:]) / 2.0)
-        elif isfloat(row['Shared?']):
-            return convert_float_to_dollar(row['Shared?'])
-        else:
-            return row['Cost']
-
-    def __split_shared_costs(self, df):
-        df['Cost'] = df.apply(lambda row: self.__split_shared_cost_row(row), axis=1)
+    def __format_df(self, df):
+        df['Paid By'] = 'Ryan'
+        df['Blank'] = ''
+        df['Price'] = df.apply(lambda row: row['Price'][1:], axis=1)
+        df['Category'] = df.apply(lambda row: self.__convert_categories(row['Category']), axis=1)
+        df = df[['Date', 'Category', 'Name', 'Price', 'Paid By', 'Blank', 'Cost']]
         return df
 
+    @staticmethod
+    def __convert_categories(category):
+        category_conversion = {
+            'Groceries': 'Grocery',
+            'Eating Out': 'Restaurant',
+            'Fixed': 'Utilities'
+        }
+        return category_conversion[category] if category in category_conversion else category
+
+    def get_last_row_number(self):
+        return len(self.current_wksht.get_all_values()) + 1
+
     def import_df(self, df):
-        print("Importing Data into {}".format(self.wksheet_name))
-        df = df[['Date', 'Name', 'Category', 'Price', 'Cost', 'Shared?']]
-        self.current_wksht.set_dataframe(df, (5, 1), copy_head=False)
+        df = self.__format_df(df)
+        self.current_wksht.set_dataframe(df, (self.get_last_row_number(), 1), copy_head=False)
 
-    def export_df_split_shared(self):
-        return self.__split_shared_costs(self.current_wksht.get_as_df(start='A4', end='F87'))
-
-    def export_shared_only_df(self):
-        df = self.export_df_split_shared()
-        return df[df['Shared?'] != '']
-
-    def update_worksheet_with_split_shared(self):
-        self.import_df(self.export_df_split_shared())
+    def export_df(self):
+        return self.current_wksht.get_as_df(start='A4', end='F87')
 
     def add_next_months_worksheet(self):
         try:
