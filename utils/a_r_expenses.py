@@ -9,6 +9,7 @@ class ARExpenses(object):
         self.year = (datetime.datetime.now() + relativedelta(months=-1)).strftime('%y')
         self.month = (datetime.datetime.now() + relativedelta(months=-1)).strftime('%b')
         self.next_month = datetime.datetime.now().strftime('%b')
+        self.next_month_full_name = datetime.datetime.now().strftime('%B')
         self.next_months_year = datetime.datetime.now().strftime('%y')
         self.wksheet_name = self.month + " '{}".format(self.year)
         self.next_wksheet_name = self.next_month + " '{}".format(self.next_months_year)
@@ -39,9 +40,6 @@ class ARExpenses(object):
         df = self.__format_df(df)
         self.current_wksht.set_dataframe(df, (self.get_last_row_number(), 1), copy_head=False)
 
-    def export_df(self):
-        return self.current_wksht.get_as_df(start='A4', end='F87')
-
     def add_next_months_worksheet(self):
         try:
             self.spreadsheet.add_worksheet(self.next_wksheet_name, src_worksheet=self.current_wksht)
@@ -51,14 +49,6 @@ class ARExpenses(object):
             print(e)
 
     def __modify_next_months_worksheet(self):
-        cells = self.__get_cells_to_update().items()
-        for cell_loc, cell in cells:
-            formula_month_replaced = cell.formula.replace(self.prev_month, self.month)
-            self.next_wksheet.update_cell(cell_loc, formula_month_replaced)
-            self.next_wksheet.update_cell(cell_loc, formula_month_replaced.replace(self.prev_months_year, self.year))
+        self.next_wksheet.clear('A8', 'J{}'.format(str(self.get_last_row_number())))
+        self.next_wksheet.update_cell('A1', '{} EXPENSES'.format(self.next_month_full_name.upper()))
 
-    def __get_cells_to_update(self):
-        cells = {}
-        for cell in ['B1','D1','F1','H1','J1','L1']:
-            cells[cell] = self.next_wksheet.cell(cell)
-        return cells

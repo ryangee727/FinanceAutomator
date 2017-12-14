@@ -29,7 +29,9 @@ if not args.step2:
 elif args.step2:
     print("Starting Step 2...")
     csp.update_worksheet_with_split_shared()
-    ARExpenses().import_df(csp.export_shared_only_df())
+    ARExpenses = ARExpenses()
+    ARExpenses.import_df(csp.export_shared_only_df())
+    ARExpenses.add_next_months_worksheet()
 print("Finished!")
 
 
