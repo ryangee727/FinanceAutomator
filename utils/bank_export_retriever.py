@@ -1,4 +1,5 @@
 import glob
+import os
 from utils.bank_account_exports.bank_account_export_factory import BankAccountExportFactory
 
 
@@ -13,6 +14,7 @@ class BankExportRetriever(object):
             bank_export = BankAccountExportFactory(export).produce()
             if bank_export:
                 self.bank_exports.append(bank_export.data_frame)
+                bank_export.move_csv_to_archived()
 
     def get_bank_exports(self):
         return self.bank_exports

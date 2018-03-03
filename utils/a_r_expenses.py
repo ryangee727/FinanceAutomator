@@ -21,7 +21,8 @@ class ARExpenses(object):
         df['Blank'] = ''
         df['Price'] = df.apply(lambda row: row['Price'][1:], axis=1)
         df['Category'] = df.apply(lambda row: self.__convert_categories(row['Category']), axis=1)
-        df = df[['Date', 'Category', 'Name', 'Price', 'Paid By', 'Blank', 'Cost']]
+        df['Shared?'] = df.apply(lambda row: 'American Express' if row['Shared?'] == 'AE' else '', axis=1)
+        df = df[['Date', 'Category', 'Name', 'Price', 'Paid By', 'Blank', 'Cost', 'Blank', 'Blank', 'Shared?']]
         return df
 
     @staticmethod

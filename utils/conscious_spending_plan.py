@@ -20,8 +20,8 @@ class ConsciousSpendingPlan(object):
 
     @staticmethod
     def __split_shared_cost_row(row):
-        if row['Shared?'] == 'y':
-            return convert_float_to_dollar(float(row['Price'][2:]) / 2.0)
+        if row['Shared?'] in ['y', 'AE']:
+            return convert_float_to_dollar(float(row['Price'][2:].replace(',', '')) / 2.0)
         elif isfloat(row['Shared?']):
             return convert_float_to_dollar(row['Shared?'])
         else:
@@ -41,7 +41,11 @@ class ConsciousSpendingPlan(object):
 
     def export_shared_only_df(self):
         df = self.export_df_split_shared()
-        return df[df['Shared?'] != '']
+        return df[(df['Shared?'] != '')]  # & (df['Shared?'] != 'AE') To remove AE expenses from export
+
+    def export_csv_for_training_data(self):
+        df = self.export_df_split_shared()
+        df.to_csv('../data/training_data/test.csv', index=False)
 
     def update_worksheet_with_split_shared(self):
         self.import_df(self.export_df_split_shared())

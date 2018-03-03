@@ -1,3 +1,4 @@
+import os
 
 
 def isfloat(value):
@@ -10,3 +11,8 @@ def isfloat(value):
 
 def convert_float_to_dollar(value):
     return '${:,.2f}'.format(value)
+
+
+def create_archived_month_dir(directory):
+    if not os.path.exists(directory):
+        os.makedirs(directory)
