@@ -76,6 +76,11 @@ class BankExport(object):
 
     def create_category_column(self):
         self.data_frame['Category'] = 'Eating Out'
+        self.set_categories()
+
+    def set_categories(self):
+        df = self.data_frame
+        df.loc[df['Name'].str.contains('SAM TRAN'), 'Category'] = 'Fixed'
 
     def create_shared_column(self, default_value=''):
         self.data_frame['Shared?'] = default_value
