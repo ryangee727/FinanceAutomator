@@ -22,7 +22,7 @@ csp = ConsciousSpendingPlan()
 if not args.step2:
     print("Starting Step 1...")
     bank_exports = BankExportRetriever('../data/').get_bank_exports()
-    merged = pd.concat(bank_exports, ignore_index=True)
+    merged = pd.concat(bank_exports, ignore_index=True, sort=True)
     if not args.skip_next_month:
         csp.add_next_months_worksheet()
     csp.import_df(merged)
