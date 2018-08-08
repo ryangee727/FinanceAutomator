@@ -37,7 +37,7 @@ class ConsciousSpendingPlan(object):
         self.current_wksht.set_dataframe(df, (5, 1), copy_head=False)
 
     def export_df_split_shared(self):
-        return self.__split_shared_costs(self.current_wksht.get_as_df(start='A4', end='F87'))
+        return self.__split_shared_costs(self.current_wksht.get_as_df(start='A4', end='F150'))
 
     def export_shared_only_df(self):
         df = self.export_df_split_shared()
